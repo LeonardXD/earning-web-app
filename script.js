@@ -1,0 +1,350 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
+    const equationMode = document.getElementById('equationMode');
+    const captchaMode = document.getElementById('captchaMode');
+    const equationContainer = document.getElementById('equationModeContainer');
+    const captchaContainer = document.getElementById('captchaModeContainer');
+    const dailyRewardMode = document.getElementById('dailyRewardMode');
+    const dailyRewardContainer = document.getElementById('dailyRewardModeContainer');
+    const dailyRewardStatus = document.getElementById('dailyRewardStatus');
+    const claimDailyRewardBtn = document.getElementById('claimDailyRewardBtn');
+    const spinningRewardModal = document.getElementById('spinningRewardModal');
+    const rewardSpinner = document.getElementById('rewardSpinner');
+    const closeSpinningRewardModal = document.getElementById('closeSpinningRewardModal');
+    const num1 = document.getElementById('num1');
+    const num2 = document.getElementById('num2');
+    const answerInput = document.getElementById('answer');
+    const submitAnswerBtn = document.getElementById('submitAnswer');
+    const captchaDisplay = document.getElementById('captchaDisplay');
+    const captchaInput = document.getElementById('captchaInput');
+    const submitCaptchaBtn = document.getElementById('submitCaptcha');
+    const messageDisplay = document.querySelector('.message-display');
+    const coinBalance = document.getElementById('coinBalance');
+    const tasksCompleted = document.getElementById('tasksCompleted');
+    const viewTasksBtn = document.getElementById('viewTasksBtn');
+    const tasksModal = document.getElementById('tasksModal');
+    const taskList = document.getElementById('taskList');
+    const closeModal = document.querySelector('.close');
+
+    // State
+    let coins = 0;
+    let eqSolved = 0;
+    let capSolved = 0;
+    let lastResetDate = localStorage.getItem('lastResetDate');
+    let dailyRewardClaimedToday = localStorage.getItem('dailyRewardClaimedToday') === 'true';
+    let equationTaskClaimedToday = localStorage.getItem('equationTaskClaimedToday') === 'true';
+    let captchaTaskClaimedToday = localStorage.getItem('captchaTaskClaimedToday') === 'true';
+
+    // Function to get current date in PH time (YYYY-MM-DD)
+    const getPHDate = () => {
+        const now = new Date();
+        return now.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' }); // YYYY-MM-DD format
+    };
+
+    // Load from localStorage
+    if (localStorage.getItem('coinBalance')) {
+        coins = parseInt(localStorage.getItem('coinBalance'));
+        coinBalance.textContent = coins;
+    }
+    if (localStorage.getItem('eqSolved')) {
+        eqSolved = parseInt(localStorage.getItem('eqSolved'));
+    }
+    if (localStorage.getItem('capSolved')) {
+        capSolved = parseInt(localStorage.getItem('capSolved'));
+    }
+
+    // Daily reset check
+    const todayPH = getPHDate();
+    if (lastResetDate !== todayPH) {
+        eqSolved = 0;
+        capSolved = 0;
+        dailyRewardClaimedToday = false;
+        equationTaskClaimedToday = false;
+        captchaTaskClaimedToday = false;
+        localStorage.setItem('lastResetDate', todayPH);
+        localStorage.setItem('dailyRewardClaimedToday', 'false');
+        localStorage.setItem('equationTaskClaimedToday', 'false');
+        localStorage.setItem('captchaTaskClaimedToday', 'false');
+    }
+
+    // Functions
+    const generateEquation = () => {
+        const n1 = Math.floor(Math.random() * 10) + 1;
+        const n2 = Math.floor(Math.random() * 10) + 1;
+        const operators = ['+', '-', '*'];
+        const operator = operators[Math.floor(Math.random() * operators.length)];
+
+        num1.textContent = n1;
+        num2.textContent = n2;
+        document.getElementById('operator').textContent = operator;
+        answerInput.value = '';
+    };
+
+    const generateCaptcha = () => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let captcha = '';
+        for (let i = 0; i < 6; i++) {
+            captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        captchaDisplay.textContent = captcha;
+        captchaInput.value = '';
+    };
+
+    const showMessage = (message, type) => {
+        messageDisplay.textContent = message;
+        messageDisplay.className = `message-display ${type}`;
+        messageDisplay.style.display = 'block';
+        messageDisplay.style.opacity = 1;
+        setTimeout(() => {
+            messageDisplay.style.opacity = 0;
+            setTimeout(() => {
+                messageDisplay.style.display = 'none';
+            }, 500);
+        }, 2000);
+    };
+
+    const updateCoins = (amount) => {
+        coins += amount;
+        coinBalance.textContent = coins;
+        localStorage.setItem('coinBalance', coins);
+    };
+
+    const updateTasks = () => {
+        let completed = 0;
+        if (eqSolved >= 100) completed++;
+        if (capSolved >= 100) completed++;
+        tasksCompleted.textContent = completed;
+
+        localStorage.setItem('eqSolved', eqSolved);
+        localStorage.setItem('capSolved', capSolved);
+
+        taskList.innerHTML = `
+            <div class="task-card">
+                <p>Solve 100 equations</p>
+                <p>Reward: 200 coins</p>
+                <p>${eqSolved}/100</p>
+                <button class="claim-reward-btn" data-task="equation" ${eqSolved < 100 || equationTaskClaimedToday ? 'disabled' : ''}>${equationTaskClaimedToday ? 'Claimed' : 'Claim'}</button>
+            </div>
+            <div class="task-card">
+                <p>Solve 100 captchas</p>
+                <p>Reward: 500 coins</p>
+                <p>${capSolved}/100</p>
+                <button class="claim-reward-btn" data-task="captcha" ${capSolved < 100 || captchaTaskClaimedToday ? 'disabled' : ''}>${captchaTaskClaimedToday ? 'Claimed' : 'Claim'}</button>
+            </div>
+        `;
+    };
+
+    // Event Listeners
+    equationMode.addEventListener('change', () => {
+        equationContainer.style.display = 'flex';
+        captchaContainer.style.display = 'none';
+        captchaContainer.style.opacity = '0';
+        captchaContainer.style.pointerEvents = 'none';
+        dailyRewardContainer.style.display = 'none';
+        dailyRewardContainer.style.opacity = '0';
+        dailyRewardContainer.style.pointerEvents = 'none';
+        generateEquation();
+    });
+
+    captchaMode.addEventListener('change', () => {
+        equationContainer.style.display = 'none';
+        captchaContainer.style.display = 'flex';
+        captchaContainer.style.opacity = '1';
+        captchaContainer.style.pointerEvents = 'auto';
+        dailyRewardContainer.style.display = 'none';
+        generateCaptcha();
+    });
+
+    dailyRewardMode.addEventListener('change', () => {
+        equationContainer.style.display = 'none';
+        captchaContainer.style.display = 'none';
+        dailyRewardContainer.style.display = 'flex';
+        dailyRewardContainer.style.opacity = '1';
+        dailyRewardContainer.style.pointerEvents = 'auto';
+        updateDailyRewardUI();
+        startCountdown();
+    });
+
+    const updateDailyRewardUI = () => {
+        if (!dailyRewardClaimedToday) {
+            dailyRewardStatus.textContent = '✅ Reward available!';
+            claimDailyRewardBtn.disabled = false;
+        } else {
+            dailyRewardStatus.textContent = '⏳ Reward available in ';
+            claimDailyRewardBtn.disabled = true;
+        }
+    };
+
+    const startCountdown = () => {
+        const updateCountdown = () => {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0); // Midnight of tomorrow
+
+            const timeRemaining = tomorrow.getTime() - now.getTime();
+
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            if (dailyRewardClaimedToday) {
+                dailyRewardStatus.textContent = `⏳ Reward available in ${hours}h ${minutes}m ${seconds}s`;
+                claimDailyRewardBtn.style.backgroundColor = "var(--secondary-color)";
+            }
+
+            if (timeRemaining <= 0) {
+                // Reset at midnight
+                const todayPH = getPHDate();
+                localStorage.setItem('lastResetDate', todayPH);
+                localStorage.setItem('claimedToday', 'false');
+                claimedToday = false;
+                eqSolved = 0;
+                capSolved = 0;
+                localStorage.setItem('eqSolved', eqSolved);
+                localStorage.setItem('capSolved', capSolved);
+                updateDailyRewardUI();
+                updateTasks();
+            }
+        };
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call to display immediately
+    };
+
+    submitAnswerBtn.addEventListener('click', () => {
+        const n1 = parseInt(num1.textContent);
+        const n2 = parseInt(num2.textContent);
+        const operator = document.getElementById('operator').textContent;
+        let correctAnswer;
+
+        switch (operator) {
+            case '+':
+                correctAnswer = n1 + n2;
+                break;
+            case '-':
+                correctAnswer = n1 - n2;
+                break;
+            case '*':
+                correctAnswer = n1 * n2;
+                break;
+        }
+
+        if (parseInt(answerInput.value) === correctAnswer) {
+            showMessage('Correct! You earned 1 coin', 'success');
+            updateCoins(1);
+            eqSolved++;
+            updateTasks();
+        } else {
+            showMessage('Incorrect. Try again.', 'error');
+        }
+        generateEquation();
+    });
+
+    answerInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            submitAnswerBtn.click();
+        }
+    });
+
+    submitCaptchaBtn.addEventListener('click', () => {
+        if (captchaInput.value === captchaDisplay.textContent) {
+            showMessage('Correct! You earned 1 coin', 'success');
+            updateCoins(1);
+            capSolved++;
+            updateTasks();
+        } else {
+            showMessage('Incorrect. Try again.', 'error');
+        }
+        generateCaptcha();
+    });
+
+    captchaInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            submitCaptchaBtn.click();
+        }
+    });
+
+    viewTasksBtn.addEventListener('click', () => {
+        tasksModal.style.display = 'block';
+        updateTasks();
+    });
+
+    closeModal.addEventListener('click', () => {
+        tasksModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == tasksModal) {
+            tasksModal.style.display = 'none';
+        }
+    });
+
+    taskList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('claim-reward-btn')) {
+            const taskType = e.target.dataset.task;
+            let rewardAmount = 0;
+            if (taskType === 'equation') {
+                rewardAmount = 200;
+            } else if (taskType === 'captcha') {
+                rewardAmount = 500;
+            }
+            updateCoins(rewardAmount);
+            showMessage(`${rewardAmount} coins claimed!`, 'success');
+            e.target.disabled = true;
+            e.target.textContent = 'Claimed';
+
+            if (taskType === 'equation') {
+                equationTaskClaimedToday = true;
+                localStorage.setItem('equationTaskClaimedToday', 'true');
+            } else if (taskType === 'captcha') {
+                captchaTaskClaimedToday = true;
+                localStorage.setItem('captchaTaskClaimedToday', 'true');
+            }
+        }
+    });
+
+    claimDailyRewardBtn.addEventListener('click', () => {
+        spinningRewardModal.style.display = 'block'; // Show the spinning modal
+
+        const rand = Math.random();
+        let rewardAmount;
+
+        if (rand < 0.97) { // 97% chance
+            rewardAmount = Math.floor(Math.random() * (870 - 100 + 1)) + 100;
+        } else if (rand < 0.99) { // 2% chance (0.99 - 0.97)
+            rewardAmount = Math.floor(Math.random() * (49999 - 871 + 1)) + 871;
+        } else { // 1% chance
+            rewardAmount = 50000;
+        }
+
+        // Spinning animation logic
+        let spinInterval = setInterval(() => {
+            rewardSpinner.textContent = Math.floor(Math.random() * (50000 - 100 + 1)) + 100;
+        }, 50);
+
+        setTimeout(() => {
+            clearInterval(spinInterval);
+            rewardSpinner.textContent = rewardAmount; // Display the actual reward
+            updateCoins(rewardAmount); // Add to balance
+            showMessage(`Claimed ${rewardAmount} coins!`, 'success');
+            dailyRewardClaimedToday = true;
+            localStorage.setItem('dailyRewardClaimedToday', 'true');
+            updateDailyRewardUI();
+
+            setTimeout(() => {
+                spinningRewardModal.style.display = 'none'; // Hide modal after a short delay
+            }, 1500); // Hide after 1.5 seconds
+
+        }, 3000); // Spin for 3 seconds
+    });
+
+    closeSpinningRewardModal.addEventListener('click', () => {
+        spinningRewardModal.style.display = 'none';
+    });
+
+    // Initial setup
+    generateEquation();
+    generateCaptcha();
+    updateTasks();
+});

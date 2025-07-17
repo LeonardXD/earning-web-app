@@ -1,0 +1,58 @@
+main {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.about-section {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 2rem auto;
+    background-color: var(--white);
+    border-radius: 1rem;
+    box-shadow: 5px 10px 15px var(--light-gray);
+    text-align: center;
+}
+
+.about-section h1 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.about-section p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.about-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 1rem;
+    text-align: left;
+    display: inline-block; /* To center the list */
+}
+
+.about-section ul li {
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding-left: 20px; /* Space for custom bullet */
+}
+
+.about-section ul li::before {
+    content: '\2022'; /* Unicode for a bullet point */
+    color: var(--primary-color);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+.about-section strong {
+    color: var(--secondary-color);
+}
+
+@media screen and (max-width: 768px) {
+    .about-section {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+}

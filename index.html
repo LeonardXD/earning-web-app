@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DemoTasker - Earn</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <section class="nav-logo">
+                <a href="index.html">
+                    <img src="img/logo.png" alt="DemoTasker Logo">
+                    <strong>DemoTasker</strong>
+                </a>
+            </section>
+            <button class="hamburger" aria-label="Open Menu">&#9776;</button>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="faq.html">FAQs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="sub-main">
+            <div class="coin-bal">
+                <h2>Your Coins</h2>
+                <div class="coin-balance-container">
+                    <img src="img/doggy-coin.png" alt="Coin" class="coin-icon">
+                    <p id="coinBalance">0</p>
+                </div>
+            </div>
+            <div class="achievements-col">
+                <h2>Daily Tasks</h2>
+                <p><span id="tasksCompleted">0</span> Tasks Completed</p>
+                <button id="viewTasksBtn">View</button>
+            </div>
+        </div>
+        <div class="main-col">
+            <div class="mode-toggle">
+                <input type="radio" id="equationMode" name="mode" checked>
+                <label for="equationMode">Equation</label>
+                <input type="radio" id="captchaMode" name="mode">
+                <label for="captchaMode">Captcha</label>
+                <input type="radio" id="dailyRewardMode" name="mode">
+                <label for="dailyRewardMode">Daily Reward</label>
+            </div>
+            <div id="equationModeContainer">
+                <div class="equation-container">
+                    <span id="num1"></span>
+                    <span id="operator"></span>
+                    <span id="num2"></span>
+                    <span>=</span>
+                    <span>?</span>
+                </div>
+                <input type="text" id="answer" class="styled-input" placeholder="Enter Answer">
+                <button id="submitAnswer">Submit</button>
+            </div>
+            <div id="captchaModeContainer" style="display: none;">
+                <div class="captcha-container">
+                    <div id="captchaDisplay"></div>
+                </div>
+                <input type="text" id="captchaInput" class="styled-input" placeholder="Enter Captcha">
+                <button id="submitCaptcha">Submit</button>
+            </div>
+            <div id="dailyRewardModeContainer" style="display: none;">
+                <div class="daily-reward-container">
+                    <p>Reward Range: 100 - 50,000 coins</p>
+                    <p id="dailyRewardStatus"></p>
+                    <button id="claimDailyRewardBtn">Claim</button>
+                </div>
+            </div>
+            <div class="message-display"></div>
+        </div>
+    </main>
+    <div id="tasksModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Daily Tasks</h2>
+            <div id="taskList">
+                </div>
+        </div>
+    </div>
+    <div id="spinningRewardModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeSpinningRewardModal">&times;</span>
+            <h2>Spinning for Reward!</h2>
+            <div class="spinner-display" id="rewardSpinner"></div>
+        </div>
+    </div>
+    <footer>
+        <label>DemoTasker - 2025 © All rights reserved</label>
+    </footer>
+    <script src="script.js"></script>
+    <script src="nav.js"></script>
+</body>
+</html>
