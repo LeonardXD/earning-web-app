@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitCaptchaBtn = document.getElementById('submitCaptcha');
     const messageDisplay = document.querySelector('.message-display');
     const coinBalance = document.getElementById('coinBalance');
+    const pesoBalance = document.getElementById('pesoBalance');
     const tasksCompleted = document.getElementById('tasksCompleted');
     const viewTasksBtn = document.getElementById('viewTasksBtn');
     const tasksModal = document.getElementById('tasksModal');
@@ -45,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('coinBalance')) {
         coins = parseInt(localStorage.getItem('coinBalance'));
         coinBalance.textContent = coins;
+        const pesoValue = (coins / 1000).toFixed(2);
+        pesoBalance.textContent = `(₱${pesoValue})`;
     }
     if (localStorage.getItem('eqSolved')) {
         eqSolved = parseInt(localStorage.getItem('eqSolved'));
@@ -106,6 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateCoins = (amount) => {
         coins += amount;
         coinBalance.textContent = coins;
+        const pesoValue = (coins / 1000).toFixed(2);
+        pesoBalance.textContent = `(₱${pesoValue})`;
         localStorage.setItem('coinBalance', coins);
     };
 
@@ -231,8 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (parseInt(answerInput.value) === correctAnswer) {
-            showMessage('Correct! You earned 1 coin', 'success');
-            updateCoins(1);
+            showMessage('Correct! You earned 3 coins', 'success');
+            updateCoins(3);
             eqSolved++;
             updateTasks();
         } else {
@@ -249,8 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     submitCaptchaBtn.addEventListener('click', () => {
         if (captchaInput.value === captchaDisplay.textContent) {
-            showMessage('Correct! You earned 1 coin', 'success');
-            updateCoins(1);
+            showMessage('Correct! You earned 5 coins', 'success');
+            updateCoins(5);
             capSolved++;
             updateTasks();
         } else {
