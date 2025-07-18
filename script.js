@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const captchaContainer = document.getElementById('captchaModeContainer');
     const dailyRewardMode = document.getElementById('dailyRewardMode');
     const dailyRewardContainer = document.getElementById('dailyRewardModeContainer');
+    const numberEncodingMode = document.getElementById('numberEncodingMode');
+    const numberEncodingContainer = document.getElementById('numberEncodingModeContainer');
+    const numberEncodingModal = document.getElementById('numberEncodingModal');
     const dailyRewardStatus = document.getElementById('dailyRewardStatus');
     const claimDailyRewardBtn = document.getElementById('claimDailyRewardBtn');
     const spinningRewardModal = document.getElementById('spinningRewardModal');
@@ -18,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const captchaDisplay = document.getElementById('captchaDisplay');
     const captchaInput = document.getElementById('captchaInput');
     const submitCaptchaBtn = document.getElementById('submitCaptcha');
+    const numberToEncode = document.getElementById('numberToEncode');
+    const encodedNumberInput = document.getElementById('encodedNumberInput');
+    const submitEncodedNumber = document.getElementById('submitEncodedNumber');
     const messageDisplay = document.querySelector('.message-display');
     const coinBalance = document.getElementById('coinBalance');
     const pesoBalance = document.getElementById('pesoBalance');
@@ -26,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasksModal = document.getElementById('tasksModal');
     const taskList = document.getElementById('taskList');
     const closeModal = document.querySelector('.close');
+    const closeNumberEncodingModal = document.getElementById('closeNumberEncodingModal');
 
     // State
     let coins = 0;
@@ -72,8 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Functions
     const generateEquation = () => {
-        const n1 = Math.floor(Math.random() * 10) + 1;
-        const n2 = Math.floor(Math.random() * 10) + 1;
+        const n1 = Math.floor(Math.random() * 9998) + 1;
+        const n2 = Math.floor(Math.random() * 9998) + 1;
         const operators = ['+', '-', '*'];
         const operator = operators[Math.floor(Math.random() * operators.length)];
 
@@ -143,11 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
     equationMode.addEventListener('change', () => {
         equationContainer.style.display = 'flex';
         captchaContainer.style.display = 'none';
-        captchaContainer.style.opacity = '0';
-        captchaContainer.style.pointerEvents = 'none';
         dailyRewardContainer.style.display = 'none';
-        dailyRewardContainer.style.opacity = '0';
-        dailyRewardContainer.style.pointerEvents = 'none';
+        numberEncodingContainer.style.display = 'none';
         generateEquation();
     });
 
@@ -157,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         captchaContainer.style.opacity = '1';
         captchaContainer.style.pointerEvents = 'auto';
         dailyRewardContainer.style.display = 'none';
+        numberEncodingContainer.style.display = 'none';
         generateCaptcha();
     });
 
@@ -164,13 +169,59 @@ document.addEventListener('DOMContentLoaded', () => {
         equationContainer.style.display = 'none';
         captchaContainer.style.display = 'none';
         dailyRewardContainer.style.display = 'flex';
-        dailyRewardContainer.style.opacity = '1';
-        dailyRewardContainer.style.pointerEvents = 'auto';
+        numberEncodingContainer.style.display = 'none';
         updateDailyRewardUI();
         startCountdown();
     });
 
-    const updateDailyRewardUI = () => {
+    numberEncodingMode.addEventListener('change', () => {
+        equationContainer.style.display = 'none';
+        captchaContainer.style.display = 'none';
+        dailyRewardContainer.style.display = 'none';
+        numberEncodingContainer.style.display = 'none';
+        numberEncodingModal.style.display = 'block';
+    });
+
+    closeNumberEncodingModal.addEventListener('click', () => {
+        numberEncodingModal.style.display = 'none';
+    });
+
+    document.querySelectorAll('.digit-option-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const digits = parseInt(button.dataset.digits);
+            const reward = parseInt(button.dataset.reward);
+            numberEncodingModal.style.display = 'none';
+            numberEncodingContainer.style.display = 'flex';
+            generateNumberToEncode(digits, reward);
+        });
+    });
+
+    const generateNumberToEncode = (digits, reward) => {
+        let number = '';
+        for (let i = 0; i < digits; i++) {
+            number += Math.floor(Math.random() * 10);
+        }
+        numberToEncode.textContent = number;
+        encodedNumberInput.value = '';
+        submitEncodedNumber.dataset.reward = reward;
+        submitEncodedNumber.dataset.original = number;
+    };
+
+    submitEncodedNumber.addEventListener('click', () => {
+        const originalNumber = submitEncodedNumber.dataset.original;
+        const encodedNumber = encodedNumberInput.value;
+        const reward = parseInt(submitEncodedNumber.dataset.reward);
+
+        if (encodedNumber === originalNumber) {
+            showMessage(`Correct! You earned ${reward} coins`, 'success');
+            updateCoins(reward);
+        } else {
+            showMessage('Incorrect. Try again.', 'error');
+        }
+        generateNumberToEncode(originalNumber.length, reward);
+    });
+
+    const updateDailyRewardUI = () => {""
         if (!dailyRewardClaimedToday) {
             dailyRewardStatus.textContent = '✅ Reward available!';
             claimDailyRewardBtn.disabled = false;
@@ -269,6 +320,12 @@ document.addEventListener('DOMContentLoaded', () => {
             submitCaptchaBtn.click();
         }
     });
+
+    encodedNumberInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            submitEncodedNumber.click();
+        }
+    })
 
     viewTasksBtn.addEventListener('click', () => {
         tasksModal.style.display = 'block';

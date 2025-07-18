@@ -49,6 +49,8 @@
                 <label for="captchaMode">Captcha</label>
                 <input type="radio" id="dailyRewardMode" name="mode">
                 <label for="dailyRewardMode">Daily Reward</label>
+                <input type="radio" id="numberEncodingMode" name="mode">
+                <label for="numberEncodingMode">Number Encoding</label>
             </div>
             <div id="equationModeContainer">
                 <div class="equation-container">
@@ -63,7 +65,7 @@
             </div>
             <div id="captchaModeContainer" style="display: none;">
                 <div class="captcha-container">
-                    <div id="captchaDisplay"></div>
+                    <div id="captchaDisplay" class="displayText"></div>
                 </div>
                 <input type="text" id="captchaInput" class="styled-input" placeholder="Enter Captcha">
                 <button id="submitCaptcha">Submit</button>
@@ -74,6 +76,13 @@
                     <p id="dailyRewardStatus"></p>
                     <button id="claimDailyRewardBtn">Claim</button>
                 </div>
+            </div>
+            <div id="numberEncodingModeContainer" class="cool-border" style="display: none;">
+                <div class="captcha-container">
+                    <div id="numberToEncode" class="displayText"></div>
+                </div>
+                <input type="text" id="encodedNumberInput" class="styled-input" placeholder="Enter Encoded Number">
+                <button id="submitEncodedNumber">Submit</button>
             </div>
             <div class="message-display"></div>
         </div>
@@ -91,6 +100,17 @@
             <span class="close" id="closeSpinningRewardModal">&times;</span>
             <h2>Spinning for Reward!</h2>
             <div class="spinner-display" id="rewardSpinner"></div>
+        </div>
+    </div>
+    <div id="numberEncodingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeNumberEncodingModal">&times;</span>
+            <h2>Choose Number Encoding Length</h2>
+            <div class="digit-options">
+                <button class="digit-option-btn" data-digits="3" data-reward="1">3 Digits - Reward: 1 Coin</button>
+                <button class="digit-option-btn" data-digits="5" data-reward="3">5 Digits - Reward: 3 Coins</button>
+                <button class="digit-option-btn" data-digits="10" data-reward="5">10 Digits - Reward: 5 Coins</button>
+            </div>
         </div>
     </div>
     <footer>
