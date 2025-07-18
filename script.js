@@ -33,6 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('taskList');
     const closeModal = document.querySelector('.close');
     const closeNumberEncodingModal = document.getElementById('closeNumberEncodingModal');
+    const memoryMode = document.getElementById('memoryMode');
+    const memoryGameModal = document.getElementById('memoryGameModal');
+    const memoryGameGrid = document.getElementById('memoryGameGrid');
+    const memoryGameTimer = document.getElementById('memoryGameTimer');
+    const closeMemoryGameModal = document.getElementById('closeMemoryGameModal');
 
     // State
     let coins = 0;
@@ -409,4 +414,101 @@ document.addEventListener('DOMContentLoaded', () => {
     generateEquation();
     generateCaptcha();
     updateTasks();
+
+    // Memory Game Logic
+    let memoryTimer;
+    let timeLeft = 30;
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let gameActive = false;
+
+    const createMemoryGame = () => {
+        const numbers = Array.from({ length: 12 }, (_, i) => i + 1);
+        const cardValues = [...numbers, ...numbers, 13]; // 12 pairs + 1 unique
+        cardValues.sort(() => Math.random() - 0.5); // Shuffle
+
+        memoryGameGrid.innerHTML = '';
+        matchedPairs = 0;
+        gameActive = true;
+
+        cardValues.forEach(value => {
+            const card = document.createElement('div');
+            card.classList.add('memory-card');
+            card.dataset.value = value;
+
+            card.innerHTML = `
+                <div class="card-face card-front"></div>
+                <div class="card-face card-rear">${value}</div>
+            `;
+
+            card.addEventListener('click', () => {
+                if (gameActive && !card.classList.contains('flipped') && flippedCards.length < 2) {
+                    card.classList.add('flipped');
+                    flippedCards.push(card);
+
+                    if (flippedCards.length === 2) {
+                        setTimeout(checkForMatch, 500);
+                    }
+                }
+            });
+
+            memoryGameGrid.appendChild(card);
+        });
+    };
+
+    const checkForMatch = () => {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.value === card2.dataset.value) {
+            matchedPairs++;
+            card1.style.pointerEvents = 'none';
+            card2.style.pointerEvents = 'none';
+            if (matchedPairs === 12) {
+                endMemoryGame(true);
+            }
+        } else {
+            card1.classList.remove('flipped');
+            card2.classList.remove('flipped');
+        }
+        flippedCards = [];
+    };
+
+    const startMemoryGame = () => {
+        memoryGameModal.style.display = 'block';
+        createMemoryGame();
+        timeLeft = 60;
+        memoryGameTimer.textContent = `Time Left: ${timeLeft}s`;
+        memoryTimer = setInterval(() => {
+            timeLeft--;
+            memoryGameTimer.textContent = `Time Left: ${timeLeft}s`;
+            if (timeLeft <= 0) {
+                endMemoryGame(false);
+            }
+        }, 1000);
+    };
+
+    const endMemoryGame = (success) => {
+        clearInterval(memoryTimer);
+        gameActive = false;
+        if (success) {
+            showMessage('You won! You earned 20 coins.', 'success');
+            updateCoins(20);
+        }
+        setTimeout(() => {
+            memoryGameModal.style.display = 'none';
+        }, 2000);
+    };
+
+    memoryMode.addEventListener('change', () => {
+        if (memoryMode.checked) {
+            equationContainer.style.display = 'none';
+            captchaContainer.style.display = 'none';
+            dailyRewardContainer.style.display = 'none';
+            numberEncodingContainer.style.display = 'none';
+            startMemoryGame();
+        }
+    });
+
+    closeMemoryGameModal.addEventListener('click', () => {
+        endMemoryGame(false);
+    });
 });

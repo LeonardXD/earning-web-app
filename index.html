@@ -51,6 +51,8 @@
                 <label for="dailyRewardMode">Daily Reward</label>
                 <input type="radio" id="numberEncodingMode" name="mode">
                 <label for="numberEncodingMode">Number Encoding</label>
+                <input type="radio" id="memoryMode" name="mode">
+                <label for="memoryMode">Memory</label>
             </div>
             <div id="equationModeContainer" class="cool-border">
                 <div class="equation-container">
@@ -111,6 +113,14 @@
                 <button class="digit-option-btn" data-digits="5" data-reward="3">5 Digits - Reward: 3 Coins</button>
                 <button class="digit-option-btn" data-digits="10" data-reward="5">10 Digits - Reward: 5 Coins</button>
             </div>
+        </div>
+    </div>
+    <div id="memoryGameModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeMemoryGameModal">&times;</span>
+            <h2>Memory Game</h2>
+            <div id="memoryGameTimer">Time Left: 30s</div>
+            <div id="memoryGameGrid" class="memory-grid"></div>
         </div>
     </div>
     <footer>
