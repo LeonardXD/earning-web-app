@@ -172,6 +172,10 @@ main {
     width: 100%;
 }
 
+.equation-container span {
+    max-width: 400px;
+}
+
 .displayText {
     font-size: 2rem;
     font-weight: bold;
@@ -352,12 +356,17 @@ main button:hover {
 .equation-container {
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 1rem;
-    font-size: 2rem;
+    font-size: clamp(1.2rem, 4vw, 2.2rem);
+    padding: 0.5rem;
+    max-width: 100%;
 }
 
 .equation-container span {
-    min-width: 30px; /* Ensure consistent spacing */
+    min-width: 20px;
+    padding: 0 0.2rem;
     text-align: center;
 }
 
@@ -568,4 +577,5 @@ footer {
     .modal-content {
         width: 80%;
     }
+    
 }
