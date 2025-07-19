@@ -38,15 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const memoryGameGrid = document.getElementById('memoryGameGrid');
     const memoryGameTimer = document.getElementById('memoryGameTimer');
     const closeMemoryGameModal = document.getElementById('closeMemoryGameModal');
+    const memoryGameContainer = document.getElementById('memoryGameContainer');
+    const memoryPlayAgainBtn = document.getElementById('memoryPlayAgainBtn');
 
     // State
     let coins = 0;
     let eqSolved = 0;
     let capSolved = 0;
+    let memoryGameCompleted = 0;
     let lastResetDate = localStorage.getItem('lastResetDate');
     let dailyRewardClaimedToday = localStorage.getItem('dailyRewardClaimedToday') === 'true';
     let equationTaskClaimedToday = localStorage.getItem('equationTaskClaimedToday') === 'true';
     let captchaTaskClaimedToday = localStorage.getItem('captchaTaskClaimedToday') === 'true';
+    let memoryTaskClaimedToday = localStorage.getItem('memoryTaskClaimedToday') === 'true';
 
     // Function to get current date in PH time (YYYY-MM-DD)
     const getPHDate = () => {
@@ -67,27 +71,41 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('capSolved')) {
         capSolved = parseInt(localStorage.getItem('capSolved'));
     }
+    if (localStorage.getItem('memoryGameCompleted')) {
+        memoryGameCompleted = parseInt(localStorage.getItem('memoryGameCompleted'));
+    }
 
     // Daily reset check
     const todayPH = getPHDate();
     if (lastResetDate !== todayPH) {
         eqSolved = 0;
         capSolved = 0;
+        memoryGameCompleted = 0;
         dailyRewardClaimedToday = false;
         equationTaskClaimedToday = false;
         captchaTaskClaimedToday = false;
+        memoryTaskClaimedToday = false;
         localStorage.setItem('lastResetDate', todayPH);
         localStorage.setItem('dailyRewardClaimedToday', 'false');
         localStorage.setItem('equationTaskClaimedToday', 'false');
         localStorage.setItem('captchaTaskClaimedToday', 'false');
+        localStorage.setItem('memoryTaskClaimedToday', 'false');
     }
 
     // Functions
     const generateEquation = () => {
-        const n1 = Math.floor(Math.random() * 9998) + 1;
-        const n2 = Math.floor(Math.random() * 9998) + 1;
         const operators = ['+', '-', '*'];
         const operator = operators[Math.floor(Math.random() * operators.length)];
+        let n1;
+        let n2;
+
+        if (operator == '*') {
+            n1 = Math.floor(Math.random() * 127) + 1;
+            n2 = Math.floor(Math.random() * 5) + 1;;
+        } else {
+            n1 = Math.floor(Math.random() * 127) + 1;
+            n2 = Math.floor(Math.random() * 63) + 1;;
+        }
 
         num1.textContent = n1;
         num2.textContent = n2;
@@ -130,23 +148,31 @@ document.addEventListener('DOMContentLoaded', () => {
         let completed = 0;
         if (eqSolved >= 100) completed++;
         if (capSolved >= 100) completed++;
+        if (memoryGameCompleted >= 25) completed++;
         tasksCompleted.textContent = completed;
 
         localStorage.setItem('eqSolved', eqSolved);
         localStorage.setItem('capSolved', capSolved);
+        localStorage.setItem('memoryGameCompleted', memoryGameCompleted);
 
         taskList.innerHTML = `
             <div class="task-card">
                 <p>Solve 100 equations</p>
-                <p>Reward: 200 coins</p>
+                <p>Reward: 100 coins</p>
                 <p>${eqSolved}/100</p>
                 <button class="claim-reward-btn" data-task="equation" ${eqSolved < 100 || equationTaskClaimedToday ? 'disabled' : ''}>${equationTaskClaimedToday ? 'Claimed' : 'Claim'}</button>
             </div>
             <div class="task-card">
                 <p>Solve 100 captchas</p>
-                <p>Reward: 500 coins</p>
+                <p>Reward: 100 coins</p>
                 <p>${capSolved}/100</p>
                 <button class="claim-reward-btn" data-task="captcha" ${capSolved < 100 || captchaTaskClaimedToday ? 'disabled' : ''}>${captchaTaskClaimedToday ? 'Claimed' : 'Claim'}</button>
+            </div>
+            <div class="task-card">
+                <p>Complete 25 Memory Challenges</p>
+                <p>Reward: 100 coins</p>
+                <p>${memoryGameCompleted}/25</p>
+                <button class="claim-reward-btn" data-task="memory" ${memoryGameCompleted < 25 || memoryTaskClaimedToday ? 'disabled' : ''}>${memoryTaskClaimedToday ? 'Claimed' : 'Claim'}</button>
             </div>
         `;
     };
@@ -157,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         captchaContainer.style.display = 'none';
         dailyRewardContainer.style.display = 'none';
         numberEncodingContainer.style.display = 'none';
+        memoryGameContainer.style.display = 'none';
         generateEquation();
     });
 
@@ -167,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         captchaContainer.style.pointerEvents = 'auto';
         dailyRewardContainer.style.display = 'none';
         numberEncodingContainer.style.display = 'none';
+        memoryGameContainer.style.display = 'none';
         generateCaptcha();
     });
 
@@ -175,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         captchaContainer.style.display = 'none';
         dailyRewardContainer.style.display = 'flex';
         numberEncodingContainer.style.display = 'none';
+        memoryGameContainer.style.display = 'none';
         updateDailyRewardUI();
         startCountdown();
     });
@@ -184,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         captchaContainer.style.display = 'none';
         dailyRewardContainer.style.display = 'none';
         numberEncodingContainer.style.display = 'none';
+        memoryGameContainer.style.display = 'none';
         numberEncodingModal.style.display = 'block';
     });
 
@@ -262,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 claimedToday = false;
                 eqSolved = 0;
                 capSolved = 0;
+                memSolved = 0;
                 localStorage.setItem('eqSolved', eqSolved);
                 localStorage.setItem('capSolved', capSolved);
                 updateDailyRewardUI();
@@ -352,9 +383,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const taskType = e.target.dataset.task;
             let rewardAmount = 0;
             if (taskType === 'equation') {
-                rewardAmount = 200;
+                rewardAmount = 100;
             } else if (taskType === 'captcha') {
-                rewardAmount = 500;
+                rewardAmount = 100;
+            } else if (taskType === 'memory') {
+                rewardAmount = 100;
             }
             updateCoins(rewardAmount);
             showMessage(`${rewardAmount} coins claimed!`, 'success');
@@ -367,6 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (taskType === 'captcha') {
                 captchaTaskClaimedToday = true;
                 localStorage.setItem('captchaTaskClaimedToday', 'true');
+            } else if (taskType === 'memory') {
+                memoryTaskClaimedToday = true;
+                localStorage.setItem('memoryTaskClaimedToday', 'true');
             }
         }
     });
@@ -410,6 +446,10 @@ document.addEventListener('DOMContentLoaded', () => {
         spinningRewardModal.style.display = 'none';
     });
 
+    memoryPlayAgainBtn.addEventListener("click", function() {
+        startMemoryGame();
+    });
+
     // Initial setup
     generateEquation();
     generateCaptcha();
@@ -423,8 +463,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameActive = false;
 
     const createMemoryGame = () => {
-        const numbers = Array.from({ length: 12 }, (_, i) => i + 1);
-        const cardValues = [...numbers, ...numbers, 13]; // 12 pairs + 1 unique
+        const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+        const cardValues = [...numbers, ...numbers]; 
         cardValues.sort(() => Math.random() - 0.5); // Shuffle
 
         memoryGameGrid.innerHTML = '';
@@ -462,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
             matchedPairs++;
             card1.style.pointerEvents = 'none';
             card2.style.pointerEvents = 'none';
-            if (matchedPairs === 12) {
+            if (matchedPairs === 10) {
                 endMemoryGame(true);
             }
         } else {
@@ -475,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startMemoryGame = () => {
         memoryGameModal.style.display = 'block';
         createMemoryGame();
-        timeLeft = 60;
+        timeLeft = 120;
         memoryGameTimer.textContent = `Time Left: ${timeLeft}s`;
         memoryTimer = setInterval(() => {
             timeLeft--;
@@ -489,21 +529,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const endMemoryGame = (success) => {
         clearInterval(memoryTimer);
         gameActive = false;
+        showPlayAgainButton();
+
         if (success) {
-            showMessage('You won! You earned 20 coins.', 'success');
-            updateCoins(20);
+            memoryGameCompleted++;
+            updateTasks();
+            showMessage('You won! You earned 50 coins.', 'success');
+            updateCoins(50);
+            showPlayAgainButton();
         }
         setTimeout(() => {
             memoryGameModal.style.display = 'none';
-        }, 2000);
+        }, 0);
     };
+
+    const showPlayAgainButton = () => {
+        memoryGameContainer.style.display = "block";
+    }
+
+    const hideContainers = () => {
+        equationContainer.style.display = 'none';
+        captchaContainer.style.display = 'none';
+        dailyRewardContainer.style.display = 'none';
+        numberEncodingContainer.style.display = 'none';
+        memoryGameContainer.style.display = 'none';
+    }
 
     memoryMode.addEventListener('change', () => {
         if (memoryMode.checked) {
-            equationContainer.style.display = 'none';
-            captchaContainer.style.display = 'none';
-            dailyRewardContainer.style.display = 'none';
-            numberEncodingContainer.style.display = 'none';
+            hideContainers();
             startMemoryGame();
         }
     });
