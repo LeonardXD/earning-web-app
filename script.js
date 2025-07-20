@@ -457,13 +457,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Memory Game Logic
     let memoryTimer;
-    let timeLeft = 30;
+    let timeLeft = 0;
     let flippedCards = [];
     let matchedPairs = 0;
     let gameActive = false;
 
     const createMemoryGame = () => {
-        const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+        const numbers = Array.from({ length: 12 }, (_, i) => i + 1);
         const cardValues = [...numbers, ...numbers]; 
         cardValues.sort(() => Math.random() - 0.5); // Shuffle
 
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
             matchedPairs++;
             card1.style.pointerEvents = 'none';
             card2.style.pointerEvents = 'none';
-            if (matchedPairs === 10) {
+            if (matchedPairs === 12) {
                 endMemoryGame(true);
             }
         } else {
@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startMemoryGame = () => {
         memoryGameModal.style.display = 'block';
         createMemoryGame();
-        timeLeft = 120;
+        timeLeft = 80;
         memoryGameTimer.textContent = `Time Left: ${timeLeft}s`;
         memoryTimer = setInterval(() => {
             timeLeft--;
