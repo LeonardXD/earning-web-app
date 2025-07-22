@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load from localStorage
     if (localStorage.getItem('coinBalance')) {
-        coins = parseInt(localStorage.getItem('coinBalance'));
+        coins = parseFloat(localStorage.getItem('coinBalance'));
         coinBalance.textContent = coins;
         const pesoValue = (coins / 1000).toFixed(2);
         pesoBalance.textContent = `(₱${pesoValue})`;
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.digit-option-btn').forEach(button => {
         button.addEventListener('click', () => {
             const digits = parseInt(button.dataset.digits);
-            const reward = parseInt(button.dataset.reward);
+            const reward = parseFloat(button.dataset.reward);
             numberEncodingModal.style.display = 'none';
             numberEncodingContainer.style.display = 'flex';
             generateNumberToEncode(digits, reward);
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitEncodedNumber.addEventListener('click', () => {
         const originalNumber = submitEncodedNumber.dataset.original;
         const encodedNumber = encodedNumberInput.value;
-        const reward = parseInt(submitEncodedNumber.dataset.reward);
+        const reward = parseFloat(submitEncodedNumber.dataset.reward);
 
         if (encodedNumber === originalNumber) {
             showMessage(`Correct! You earned ${reward} coins`, 'success');
@@ -323,8 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (parseInt(answerInput.value) === correctAnswer) {
-            showMessage('Correct! You earned 3 coins', 'success');
-            updateCoins(3);
+            showMessage('Correct! You earned 2 coins', 'success');
+            updateCoins(2);
             eqSolved++;
             updateTasks();
         } else {
@@ -341,8 +341,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     submitCaptchaBtn.addEventListener('click', () => {
         if (captchaInput.value === captchaDisplay.textContent) {
-            showMessage('Correct! You earned 5 coins', 'success');
-            updateCoins(5);
+            showMessage('Correct! You earned 4 coins', 'success');
+            updateCoins(4);
             capSolved++;
             updateTasks();
         } else {
@@ -414,11 +414,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let rewardAmount;
 
         if (rand < 0.97) { // 97% chance
-            rewardAmount = Math.floor(Math.random() * (870 - 100 + 1)) + 100;
+            rewardAmount = Math.floor(Math.random() * (200 - 50 + 1)) + 50;
         } else if (rand < 0.99) { // 2% chance (0.99 - 0.97)
-            rewardAmount = Math.floor(Math.random() * (49999 - 871 + 1)) + 871;
+            rewardAmount = Math.floor(Math.random() * (499 - 201 + 1)) + 201;
         } else { // 1% chance
-            rewardAmount = 50000;
+            rewardAmount = 500;
         }
 
         // Spinning animation logic
@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startMemoryGame = () => {
         memoryGameModal.style.display = 'block';
         createMemoryGame();
-        timeLeft = 80;
+        timeLeft = 70;
         memoryGameTimer.textContent = `Time Left: ${timeLeft}s`;
         memoryTimer = setInterval(() => {
             timeLeft--;
@@ -534,8 +534,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (success) {
             memoryGameCompleted++;
             updateTasks();
-            showMessage('You won! You earned 50 coins.', 'success');
-            updateCoins(50);
+            showMessage('You won! You earned 30 coins.', 'success');
+            updateCoins(30);
             showPlayAgainButton();
         }
         setTimeout(() => {
