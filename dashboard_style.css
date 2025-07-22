@@ -1,0 +1,39 @@
+.col-coin-balance {
+    background-color: var(--primary-color);
+}
+
+.col-withdrawable-balance {
+    background-color: var(--error-color);
+}
+
+.col-commissions {
+    background-color: var(--tertiary-color);
+}
+
+.main-container {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    flex: 1;
+}
+
+.main-container > div {
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 5px 10px 15px var(--light-gray);
+    width: 80%;
+    color: var(--white);
+    max-height: 30vh;
+}
+
+@media screen and (max-width: 768px) {
+    .main-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main-container > div {
+        width: 100%;
+        height: 25vh;
+    }
+}
