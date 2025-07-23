@@ -323,8 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (parseInt(answerInput.value) === correctAnswer) {
-            showMessage('Correct! You earned 2 coins', 'success');
-            updateCoins(2);
+            showMessage('Correct! You earned 3 coins', 'success');
+            updateCoins(3);
             eqSolved++;
             updateTasks();
         } else {
@@ -416,14 +416,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rand < 0.97) { // 97% chance
             rewardAmount = Math.floor(Math.random() * (200 - 50 + 1)) + 50;
         } else if (rand < 0.99) { // 2% chance (0.99 - 0.97)
-            rewardAmount = Math.floor(Math.random() * (499 - 201 + 1)) + 201;
+            rewardAmount = Math.floor(Math.random() * (999 - 201 + 1)) + 201;
         } else { // 1% chance
-            rewardAmount = 500;
+            rewardAmount = 1000;
         }
 
         // Spinning animation logic
         let spinInterval = setInterval(() => {
-            rewardSpinner.textContent = Math.floor(Math.random() * (50000 - 100 + 1)) + 100;
+            rewardSpinner.textContent = Math.floor(Math.random() * (1000 - 50 + 1)) + 50;
         }, 50);
 
         setTimeout(() => {
