@@ -4,7 +4,7 @@
     width: 250px; /* Always visible on desktop */
     position: fixed;
     z-index: 1;
-    top: 115px;
+    top: 0;
     left: 0;
     background-color: var(--background-color);
     overflow-x: hidden;
@@ -61,10 +61,12 @@
     .sidebar .closebtn {
         display: block; /* Show close button on mobile */
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 0;
+        right: 0;
         font-size: 24px;
         color: var(--text-color);
+        width: 50px;
+        height: 50px;
     }
 
     .main-content {

@@ -34,6 +34,7 @@ nav {
     justify-content: space-between;
     padding: 2rem;
     box-shadow: 5px 10px 10px var(--light-gray);
+    padding-left: 17rem;
 }
 
 .nav-logo {
@@ -597,6 +598,11 @@ footer {
         display: flex;
         flex-direction: column;
     }
+
+    nav {
+        padding-left: 2rem;
+    }
+    
     nav ul {
         flex-direction: column;
         position: absolute;
